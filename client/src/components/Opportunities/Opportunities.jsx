@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import classes from './Opportunities.module.css';
-import { Button, Card, Loader } from '../common';
+import {Card, Loader } from '../common';
 import http from '../../api';
 import Swal from 'sweetalert2';
 
@@ -35,24 +35,21 @@ const Opportunities = () => {
 		}
 	};
 
-	const debouncedSearch = debounce(async (key) => {
-			try {
-				if (key) {
-					let result = await http.get(`job/getJobs/${key}`);
-					if (result) {
-						setJobData(result.data.job);
-					}
-				} else {
-					getData();
-				}
-			} catch (error) {
-				Swal.fire({
-					icon: 'error',
-					title: 'Unable to search the jobs',
-					text: error,
-				});
+	const debouncedSearch = useMemo(
+		() =>
+		  debounce((key) => {
+			let data=jobData;
+			if (key) {
+			  const filteredData = jobData.filter((job) => {
+				return job.companyName.toLowerCase().includes(key.toLowerCase());
+			  });
+			  setJobData(filteredData);
+			} else {
+			  setJobData(data);
 			}
-		}, 2500);
+		  }, 500),
+		[test]
+	  );
 
 	const search = async (e) => {
 		const key = e.target.value;
@@ -60,6 +57,7 @@ const Opportunities = () => {
 	};
 	const filterData = async (filterBy) => {
 		setJobData(test);
+		if (filterBy === 'all') return;
 		const filteredData = test.filter((job) => {
 			return job.category === filterBy;
 		});
@@ -72,6 +70,7 @@ const Opportunities = () => {
 			<div className={classes.wrapper}>
 				<div className={classes.search_filter}>
 					<div>
+						<ThemeButton onClick={() => filterData('all')} label="All" />
 						<ThemeButton onClick={() => filterData('jobs')} label="Jobs" />
 						<ThemeButton
 							onClick={() => filterData('hackathons')}
