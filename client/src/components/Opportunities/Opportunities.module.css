@@ -23,7 +23,7 @@
 .wrapper {
 	display: flex;
 	flex-direction: column;
-	overflow-x: hidden;
+	/* overflow-x: hidden; */
 }
 .no_job {
 	text-align: center;
