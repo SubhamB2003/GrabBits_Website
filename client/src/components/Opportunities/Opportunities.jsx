@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import classes from './Opportunities.module.css';
-import {Card, Loader } from '../common';
+import {Card } from '../common';
+import PreLoader from './PreLoader/PreLoader'
 import http from '../../api';
 import Swal from 'sweetalert2';
 
@@ -22,7 +23,7 @@ const Opportunities = () => {
 		try {
 			http.get('/job/getJobs').then((response) => {
 				const data = response.data.jobs;
-				setLoading(false);
+				setTimeout(() => setLoading(false), 1500); 
 				setJobData(data);
 				setTest(data);
 			});
@@ -97,7 +98,7 @@ const Opportunities = () => {
 				<h1 className={classes.text}>Opportunities</h1>
 				{loading && (
 					<div className={classes.loader}>
-						<Loader />
+						<PreLoader />
 					</div>
 				)}
 				{!loading && jobData.length ? (
